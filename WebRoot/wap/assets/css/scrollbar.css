@@ -1,0 +1,39 @@
+
+.myScrollbarH {
+    bottom: 1px;
+    height: 8px;
+    left: 2px;
+    position: absolute;
+    right: 7px;
+    z-index: 100;
+}
+.myScrollbarH > div {
+    background-clip: padding-box;
+    background-image: -moz-linear-gradient(center top , #f00, #900);
+    border: 1px solid #900;
+    border-radius: 4px;
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-sizing: border-box;
+    height: 100%;
+    position: absolute;
+    z-index: 100;
+}
+.myScrollbarV {
+    bottom: 7px;
+    position: absolute;
+    right: 1px;
+    top: 2px;
+    width: 8px;
+    z-index: 100;
+}
+.myScrollbarV > div {
+    background-clip: padding-box;
+    background-image: -moz-linear-gradient(center top , #f00, #900);
+    border: 1px solid #900;
+    border-radius: 4px;
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+}
