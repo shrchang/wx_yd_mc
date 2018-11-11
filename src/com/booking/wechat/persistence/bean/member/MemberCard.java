@@ -68,7 +68,7 @@ public class MemberCard {
 	private String cardNo;
 
 	/**
-	 * 余额
+	 * 余额 单位是元
 	 */
 	@Column
 	private BigDecimal balance;

@@ -89,6 +89,9 @@ public class Orders {
 	@Column
 	private String couponActivityName;
 	
+	@Column
+	private String shareOpenId;//分享人的微信唯一标识
+	
 
 	@Transient
 	public static final String UNPAID = "UNPAID";// 未付款
@@ -117,6 +120,14 @@ public class Orders {
 	@Transient
 	private String timeOut;//超时时间
 	
+	public String getShareOpenId() {
+		return shareOpenId;
+	}
+
+	public void setShareOpenId(String shareOpenId) {
+		this.shareOpenId = shareOpenId;
+	}
+
 	public String getTimeOut() {
 		return timeOut;
 	}

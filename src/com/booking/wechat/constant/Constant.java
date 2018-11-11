@@ -16,12 +16,14 @@ public class Constant {
 	public static final String PAY_RESULT_FAILED = "failed";//支付失败
 	
 	//支付类型
-	public static final String PAY_TYPE_WX="weixin";
-	public static final String PAY_TYPE_ALIPAY = "alipay";
+	public static final String PAY_TYPE_WX="weixin";//微信支付
+	public static final String PAY_TYPE_ALIPAY = "alipay";//阿里支付
+	public static final String PAY_TYPE_BALANCE = "balance";//余额支付
 	
 	//变动类型
 	public static final String CHANGE_TYPE_RECHARGE="recharge";//充值
 	public static final String CHANGE_TYPE_PAYONLINE="payOnline";//在线支付
+	public static final String CHANGE_TYPE_WX = "weixin";//微信支付
 	public static final String CHANGE_TYPE_BALANCE="balance";//余额支付
 	public static final String CHANGE_TYPE_PAYOTHER="payOther";//代付 这个地方应该要有一个代付的人
 

@@ -108,6 +108,7 @@ public class MobileOrderController extends BaseController {
 		orders.setOrderDate(new Date());
 		orders.setCouponActivityId(content.getCouponActivityId());//优惠id
 		orders.setCouponActivityName(content.getCouponActivityName());//优惠名称
+		orders.setShareOpenId(content.getOpenId());//按照道理来说只要是有人分享的就应该有这个东西
 		orders.setOrderDesc("预定场地下单！");
 		orders.setOrderType("yuding");//预定订单
 		orders.setPhoneNumber(content.getPhoneNumber());//电话号码、  如果是已经是会员应该默认就是自己的手机号码

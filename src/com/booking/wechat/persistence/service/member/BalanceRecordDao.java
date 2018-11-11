@@ -14,7 +14,7 @@ import com.booking.wechat.persistence.service.base.DAO;
 public interface BalanceRecordDao extends DAO<BalanceRecord> {
 	
 	/**
-	 * 根据订单号查询资金变动流水
+	 * 根据订单号查询资金变动流水 这个不对 因为一个订单可能会存在多笔流水 预付款/尾款
 	 * @author shrChang.Liu
 	 * @param orderId
 	 * @return
@@ -23,5 +23,16 @@ public interface BalanceRecordDao extends DAO<BalanceRecord> {
 	 * @description
 	 */
 	public BalanceRecord selectByOrderId(String orderId);
+	
+	/**
+	 * 
+	 * @author shrChang.Liu
+	 * @param orderId
+	 * @return
+	 * @date 2018年11月11日 下午10:09:18
+	 * @return BalanceRecord
+	 * @description
+	 */
+	public BalanceRecord selectByOutOrderId(String orderId);
 
 }

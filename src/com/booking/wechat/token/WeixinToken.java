@@ -58,4 +58,12 @@ public class WeixinToken {
 		
 		return accessToken;
 	}
+	
+	public static void main(String[] args) {
+		WechatConfig config = new WechatConfig();
+		config.setAppId("wxf904292a227ff519");
+		config.setSecret("7adf88cc426be4295f9004968adf4cb2");
+		config.setSystemCode("test");
+		getAccessToken(config);
+	}
 }

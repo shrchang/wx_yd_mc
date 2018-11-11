@@ -173,6 +173,7 @@ public class MemberController extends BaseController{
 			balanceRecord.setMemberId(card.getId());
 			balanceRecord.setOpenId(card.getOpenId());
 			balanceRecord.setOrderId(orderId);
+			balanceRecord.setOutOrderId(orderId);
 			balanceRecord.setSource(Constant.PAY_TYPE_WX);//微信支付
 			balanceRecord.setType(Constant.CHANGE_TYPE_RECHARGE);//充值
 			balanceRecord.setStatus(Constant.PAY_RESULT_DOING);
@@ -217,7 +218,7 @@ public class MemberController extends BaseController{
 			Map<String, String> notifyMap = TenPayUtils.parseXml(sb.toString());
 			if("SUCCESS".equals(notifyMap.get("result_code")) && "SUCCESS".equals(notifyMap.get("return_code"))){
 				String orderNumber = notifyMap.get("out_trade_no");
-				BalanceRecord record = balanceRecordDao.selectByOrderId(orderNumber);
+				BalanceRecord record = balanceRecordDao.selectByOutOrderId(orderNumber);
 				MemberCard card = memberCardDao.find(record.getMemberId());
 				//要关联商户号 记得
 				TenPayClient payClient = new TenPayClient(card.getBusId());

@@ -28,4 +28,15 @@ public class BalanceRecordDaoImpl extends DaoSupport<BalanceRecord> implements B
 		return null;
 	}
 
+	@Override
+	public BalanceRecord selectByOutOrderId(String orderId) {
+		BalanceRecord record = new BalanceRecord();
+		record.setOutOrderId(orderId);
+		QueryResult<BalanceRecord> queryResult = findByExample(record);
+		if(queryResult.getTotal()>0){
+			return queryResult.getRows().get(0);
+		}
+		return null;
+	}
+
 }

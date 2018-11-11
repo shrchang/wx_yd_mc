@@ -28,9 +28,20 @@ public class OrderContent {
 	private String phoneNumber;//手机号码
 	
 	private String recommend;//推荐人卡号 也是手机号码 这个暂时是没有用的
+	
+	//这个是用于微信转发的时候 带在后面的转发那个的人弄出来的链接 个人觉得应该绑定他的会员号 因为这个地方需要去查询会员并且分红的
+	private String openId;//这个是推荐微信任的openId 可能存在也可能不存在注意
 	 
 	private List<OrderItem> items = new ArrayList<OrderItem>();//具体的订单
 	
+	public String getOpenId() {
+		return openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}

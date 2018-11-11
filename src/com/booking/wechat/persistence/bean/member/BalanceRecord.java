@@ -51,6 +51,12 @@ public class BalanceRecord {
 	private String orderId;
 	
 	/**
+	 * 给第三方使用的订单号 用于回调
+	 */
+	@Column
+	private String outOrderId;
+	
+	/**
 	 * 金额 当充值的时候为正 其余的都是负数 注意
 	 */
 	@Column
@@ -94,7 +100,7 @@ public class BalanceRecord {
 	private Boolean isUnderLine=false;
 	
 	/**
-	 * 支付凭证 微信支付或者支付宝支付应该留下的凭证或者第三方的流水号
+	 * 支付凭证 微信支付或者支付宝支付应该留下的凭证或者第三方的流水号 其实这个东西应该是微信那边的订单号 回调的时候需要用到的
 	 */
 	@Column
 	private String payOrder;
@@ -110,6 +116,14 @@ public class BalanceRecord {
 	 */
 	@Column
 	private String status;
+
+	public String getOutOrderId() {
+		return outOrderId;
+	}
+
+	public void setOutOrderId(String outOrderId) {
+		this.outOrderId = outOrderId;
+	}
 
 	public String getStatus() {
 		return status;
