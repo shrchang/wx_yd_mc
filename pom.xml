@@ -208,7 +208,7 @@
 
 		<!-- druid连接池 -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
+			<groupId>com.alibaba</groupId> 
 			<artifactId>druid</artifactId>
 			<version>1.1.10</version>
 		</dependency>
@@ -217,6 +217,12 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3.2</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>jstl</artifactId>
+		    <version>1.2</version>
 		</dependency>
 	</dependencies>
 	<build>
