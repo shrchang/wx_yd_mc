@@ -20,13 +20,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.booking.wechat.Enum.ShareRequestStatusEnum;
+import com.booking.wechat.Enum.ShareRequestTypeEnum;
 import com.booking.wechat.client.model.UserBean;
 import com.booking.wechat.client.user.UserClient;
 import com.booking.wechat.controller.BaseController;
 import com.booking.wechat.controller.mobile.vo.JssdkConfig;
+import com.booking.wechat.controller.mobile.vo.ShareRequestVO;
 import com.booking.wechat.persistence.bean.member.MemberCard;
+import com.booking.wechat.persistence.bean.share.ShareRequest;
 import com.booking.wechat.persistence.bean.wechat.WechatConfig;
 import com.booking.wechat.persistence.service.member.MemberCardDao;
+import com.booking.wechat.persistence.service.share.ShareRequestDao;
 import com.booking.wechat.persistence.service.wechat.WechatConfigDao;
 import com.booking.wechat.ticket.JsapiTickect;
 import com.booking.wechat.ticket.WeixinTicket;
@@ -55,6 +60,9 @@ public class ConfigController extends BaseController {
 
 	@Autowired
 	private MemberCardDao memberDao;// 会员卡dao
+	
+	@Autowired
+	private ShareRequestDao shareRequestDao;//分享请求dao
 
 	/**
 	 * 获取不同商户编号的微信配置
@@ -133,6 +141,8 @@ public class ConfigController extends BaseController {
 	 * @author shrChang.Liu
 	 * @param systemCode
 	 * @param url
+	 * @param type {@link ShareRequestTypeEnum} 可以为空的
+	 * @param id 根据类型来对应的id 可以为空
 	 * @return
 	 * @date 2018年11月11日 下午9:13:39
 	 * @return Map<String,Object>
@@ -141,11 +151,16 @@ public class ConfigController extends BaseController {
 	@RequestMapping(value = "/getJsSdkConfig", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> queryJssdkConfig(@RequestParam(value = "systemcode") String systemCode,
-			@RequestParam(value = "url") String url) {
+			@RequestParam(value = "url") String url,
+			@RequestParam(value="name")String name,
+			@RequestParam(value="parentId",required=false,defaultValue="0")Long parentId,
+			@RequestParam(value="type",required=false)String type,
+			@RequestParam(value="resourceId",required=false,defaultValue="0")Long resourceId) {
 		WechatConfig config = configDao.selectBySystemCode(systemCode);
 		if (config != null) {
 			AccessToken token = WeixinToken.getAccessToken(config);
 			JsapiTickect tickect = WeixinTicket.getJsApiTicket(token);
+			ShareRequestVO requestVO = new ShareRequestVO();
 			JssdkConfig jssdkConfig = new JssdkConfig();
 			jssdkConfig.setAppId(config.getAppId());
 			jssdkConfig.setJsapi_ticket(tickect.getTicket());
@@ -153,7 +168,24 @@ public class ConfigController extends BaseController {
 			jssdkConfig.setTimestamp(create_timestamp());
 			jssdkConfig.setUrl(url);
 			jssdkConfig.setSignature(sign(jssdkConfig));
-			return getSuccessResultMap("获取Jssdk配置成功！", jssdkConfig);
+			//这个地方开始添加一个插入一条新的记录 就是关于当前用户的
+			Session session = SecurityUtils.getSubject().getSession();
+			UserBean user = (UserBean) session.getAttribute("WC_USER");
+			if(user != null){
+				if(StringUtils.isNotBlank(type)){
+					type = ShareRequestTypeEnum.NORMAL.toString();
+				}
+				ShareRequest request = shareRequestDao.findRequestByOpenIdAndResource(user.getOpenid(), type, resourceId);
+				request.setName(name);
+				request.setParentId(parentId);
+				request.setUrl(url);
+				request.setStatus(ShareRequestStatusEnum.INIT.toString());
+				request.setUserName(user.getNickname());
+				shareRequestDao.doSave(request);
+				requestVO.setShareId(request.getId());
+			}
+			requestVO.setConfig(jssdkConfig);
+			return getSuccessResultMap("获取Jssdk配置成功！", requestVO);
 		}
 		return getFailResultMap("获取JsSdk配置失败！");
 	}
