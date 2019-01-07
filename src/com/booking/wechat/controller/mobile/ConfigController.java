@@ -140,7 +140,7 @@ public class ConfigController extends BaseController {
 	 * 
 	 * @author shrChang.Liu
 	 * @param systemCode
-	 * @param url
+	 * @param url 不能包含#后面的内容
 	 * @param type {@link ShareRequestTypeEnum} 可以为空的
 	 * @param id 根据类型来对应的id 可以为空
 	 * @return
@@ -153,6 +153,7 @@ public class ConfigController extends BaseController {
 	public Map<String, Object> queryJssdkConfig(@RequestParam(value = "systemcode") String systemCode,
 			@RequestParam(value = "url") String url,
 			@RequestParam(value="name")String name,
+			@RequestParam(value="openId")String openId,
 			@RequestParam(value="parentId",required=false,defaultValue="0")Long parentId,
 			@RequestParam(value="type",required=false)String type,
 			@RequestParam(value="resourceId",required=false,defaultValue="0")Long resourceId) {
@@ -169,18 +170,19 @@ public class ConfigController extends BaseController {
 			jssdkConfig.setUrl(url);
 			jssdkConfig.setSignature(sign(jssdkConfig));
 			//这个地方开始添加一个插入一条新的记录 就是关于当前用户的
-			Session session = SecurityUtils.getSubject().getSession();
-			UserBean user = (UserBean) session.getAttribute("WC_USER");
-			if(user != null){
-				if(StringUtils.isNotBlank(type)){
+//			Session session = SecurityUtils.getSubject().getSession();
+//			UserBean user = (UserBean) session.getAttribute("WC_USER");
+			if(openId != null){
+				if(StringUtils.isBlank(type)){
 					type = ShareRequestTypeEnum.NORMAL.toString();
 				}
-				ShareRequest request = shareRequestDao.findRequestByOpenIdAndResource(user.getOpenid(), type, resourceId);
+				MemberCard card = memberDao.findByOpenId(openId);
+				ShareRequest request = shareRequestDao.findRequestByOpenIdAndResource(openId, type, resourceId);
 				request.setName(name);
 				request.setParentId(parentId);
 				request.setUrl(url);
 				request.setStatus(ShareRequestStatusEnum.INIT.toString());
-				request.setUserName(user.getNickname());
+				request.setUserName(card.getNickName());
 				shareRequestDao.doSave(request);
 				requestVO.setShareId(request.getId());
 			}

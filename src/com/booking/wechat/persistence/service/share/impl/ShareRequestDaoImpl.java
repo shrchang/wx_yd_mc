@@ -14,14 +14,15 @@ public class ShareRequestDaoImpl extends DaoSupport<ShareRequest> implements Sha
 
 	@Override
 	public ShareRequest findRequestByOpenIdAndResource(String openId, String type, Long resourceId) {
+		String sql = "from "+getEntityName(ShareRequest.class) +" where openId=?1 and type=?2 and resourceId=?3";
+		List<ShareRequest> requests = findByCustomJpql(sql,new Object[]{openId,type,resourceId});
+		if(requests.size() > 0){
+			return requests.get(0);
+		}
 		ShareRequest request = new ShareRequest();
 		request.setOpenId(openId);
 		request.setType(type);
 		request.setResourceId(resourceId);
-		List<ShareRequest> requests = findByExample(request).getRows();
-		if(requests.size() > 0){
-			return requests.get(0);
-		}
 		return request;
 	}
 

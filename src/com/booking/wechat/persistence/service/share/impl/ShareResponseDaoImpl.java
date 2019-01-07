@@ -14,13 +14,14 @@ public class ShareResponseDaoImpl extends DaoSupport<ShareResponse> implements S
 
 	@Override
 	public ShareResponse findResponseByShareIdAndOpenId(Long requestId, String openId) {
-		ShareResponse response = new ShareResponse();
-		response.setRequestId(requestId);
-		response.setOpenId(openId);
-		List<ShareResponse> shareResponses = findByExample(response).getRows();
+		String sql = "from "+getEntityName(ShareResponse.class) +" where requestId=?1 and openId=?2";
+		List<ShareResponse> shareResponses = findByCustomJpql(sql,new Object[]{requestId,openId});
 		if(!shareResponses.isEmpty()){
 			return shareResponses.get(0);
 		}
+		ShareResponse response = new ShareResponse();
+		response.setRequestId(requestId);
+		response.setOpenId(openId);
 		return response;
 	}
 

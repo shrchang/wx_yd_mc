@@ -2,8 +2,6 @@ package com.booking.wechat.controller.mobile;
 
 import java.util.Map;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.booking.wechat.Enum.ShareRequestStatusEnum;
-import com.booking.wechat.client.model.UserBean;
 import com.booking.wechat.controller.BaseController;
+import com.booking.wechat.persistence.bean.member.MemberCard;
 import com.booking.wechat.persistence.bean.share.ShareRequest;
 import com.booking.wechat.persistence.bean.share.ShareResponse;
+import com.booking.wechat.persistence.service.member.MemberCardDao;
 import com.booking.wechat.persistence.service.share.ShareRequestDao;
 import com.booking.wechat.persistence.service.share.ShareResponseDao;
 
@@ -37,6 +36,9 @@ public class MobileShareController extends BaseController {
 	
 	@Autowired
 	private ShareResponseDao shareResponseDao;
+	
+	@Autowired
+	private MemberCardDao memberDao;// 会员卡dao
 	
 	/**
 	 * 修改分享请求 失败或者成功 成功次数加1 失败则不管 只修改状态
@@ -62,7 +64,7 @@ public class MobileShareController extends BaseController {
 		}else{
 			request.setStatus(ShareRequestStatusEnum.FAILED.toString());
 		}
-		shareRequestDao.doSave(request);
+		//shareRequestDao.doSave(request);
 		return getSuccessResultMap(success ? "分享成功！" : "分享失败！");
 	}
 	
@@ -76,19 +78,24 @@ public class MobileShareController extends BaseController {
 	 */
 	@RequestMapping(value="/record",method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> addShareResponse(@RequestParam("requestId")Long requestId){
-		Session session = SecurityUtils.getSubject().getSession();
-		UserBean user = (UserBean) session.getAttribute("WC_USER");
-		if(user == null){
+	public Map<String,Object> addShareResponse(@RequestParam("requestId")Long requestId,@RequestParam("openId")String openId){
+		if(openId == null){
 			return getFailResultMap("微信用户未获取！");
 		}
-		ShareResponse response = shareResponseDao.findResponseByShareIdAndOpenId(requestId, user.getOpenid());
-		response.setUserName(user.getNickname());
-		if(response.getId() == null){
-			//可能后续还有因为这个东西去购买的逻辑 这个到时再说吧
-			//TODO 这代表这是第一次浏览噢 积分什么的操作都可以直接在这里面进行操作
+		ShareRequest request = shareRequestDao.find(requestId);
+		if(request != null){
+			MemberCard card = memberDao.findByOpenId(openId);
+			ShareResponse response = shareResponseDao.findResponseByShareIdAndOpenId(requestId, openId);
+			response.setUserName(card.getNickName());
+			request.setStatus(ShareRequestStatusEnum.SUCCESS.toString());
+			shareRequestDao.doSave(request);
+			if(response.getId() == null){
+				//可能后续还有因为这个东西去购买的逻辑 这个到时再说吧
+				//TODO 这代表这是第一次浏览噢 积分什么的操作都可以直接在这里面进行操作
+			}
+			shareResponseDao.doSave(response);
+			return getSuccessResultMap("获取分享记录成功！");
 		}
-		shareResponseDao.doSave(response);
-		return getSuccessResultMap("获取分享记录成功！");
+		return getFailResultMap("没有找到对应的分享记录!");
 	}
 }

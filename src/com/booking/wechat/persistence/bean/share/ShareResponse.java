@@ -18,7 +18,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="wcob_share_request")
+@Table(name="wcob_share_response")
 public class ShareResponse {
 
 	@Id
